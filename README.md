@@ -15,4 +15,4 @@ https://ru.docworkspace.com/d/sIKKeysCWAqD8_7gG-2
 Технология разработки ПО
 [Установка линукс и Virtualbox.docx](https://github.com/user-attachments/files/17820758/Virtualbox.docx)-1
 [Установка Apache.docx](https://github.com/user-attachments/files/17820759/Apache.docx)-2
-[Работа с SQL.docx](https://github.com/user-attachments/files/17820760/SQL.docx)-3
+
