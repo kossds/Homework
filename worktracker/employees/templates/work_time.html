@@ -1,0 +1,74 @@
+<!-- work_time.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<h2>Учет времени</h2>
+<div id="work-controls">
+    <button id="start-day">Начать рабочий день</button>
+    <div id="end-break" style="display:none;">
+        <input type="datetime-local" id="break-start">
+        <input type="datetime-local" id="break-end">
+        <select id="break-type">
+            <option value="lunch">Обед</option>
+            <option value="rest">Отдых</option>
+            <option value="meeting">Встреча</option>
+        </select>
+        <button id="add-break">Добавить перерыв</button>
+        <button id="end-day">Завершить день</button>
+    </div>
+</div>
+
+<div id="report"></div>
+
+<script>
+document.getElementById('start-day').addEventListener('click', function() {
+    fetch('/start-day/', {
+        method: 'POST',
+        headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value}
+    }).then(() => {
+        document.getElementById('work-controls').innerHTML = `
+            <input type="datetime-local" id="break-start">
+            <input type="datetime-local" id="break-end">
+            <select id="break-type">
+                <option value="lunch">Обед</option>
+                <option value="rest">Отдых</option>
+                <option value="meeting">Встреча</option>
+            </select>
+            <button id="add-break">Добавить перерыв</button>
+            <button id="end-day">Завершить день</button>
+        `;
+        
+        document.getElementById('add-break').addEventListener('click', function() {
+            const work_log_id = 1 // Заменить на реальный ID
+            fetch(`/add-break/${work_log_id}/`, {
+                method: 'POST',
+                headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value},
+                body: JSON.stringify({
+                    start: document.getElementById('break-start').value,
+                    end: document.getElementById('break-end').value,
+                    type: document.getElementById('break-type').value
+                })
+            });
+        });
+        
+        document.getElementById('end-day').addEventListener('click', function() {
+            const work_log_id = 1 // Заменить на реальный ID
+            fetch(`/end-day/${work_log_id}/`, {
+                method: 'POST',
+                headers: {'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value}
+            }).then(() => {
+                fetch('/report/').then(response => response.json()).then(data => {
+                    let html = '<h3>Отчет</h3><table border="1"><tr><th>Сотрудник</th><th>Всего</th><th>Перерывы</th><th>Факт</th></tr>';
+                    data.forEach(item => {
+                        html += `<tr><td>${item.employee}</td><td>${item.total} мин</td><td>${item.breaks} мин</td><td>${item.net} мин</td></tr>`;
+                    });
+                    html += '</table>';
+                    document.getElementById('report').innerHTML = html;
+                });
+            });
+        });
+    });
+});
+</script>
+{% endblock %}

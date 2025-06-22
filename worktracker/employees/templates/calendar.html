@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block head %}
+    {{ block.super }}
+    <!-- Подключение FullCalendar -->
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.css"  rel="stylesheet">
+    <!-- Свой стиль для календаря -->
+    <link rel="stylesheet" href="{% static 'employees/css/calendar.css' %}">
+    <!-- CSRF-токен для JavaScript -->
+    <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+{% endblock %}
+
+{% block content %}
+<div class="calendar-container">
+    <h2>Календарь задач</h2>
+    <div id="calendar"></div>
+
+    <!-- Контролы для задач -->
+    <div id="task-controls" style="display: none; margin-top: 20px;">
+        <button id="start-task" class="btn btn-success">Начать</button>
+        <button id="end-task" class="btn btn-danger">Завершить</button>
+    </div>
+</div>
+
+<!-- Подключение JavaScript FullCalendar -->
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/main.min.js"></script>       
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    let currentTaskId = null;
+
+    // Инициализация календаря
+    const calendarEl = document.getElementById('calendar');
+    const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        events: '/calendar/events/',
+        eventColor: '#3788d8',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        editable: true,
+        eventDrop: function(info) {
+            fetch(`/task/${info.event.id}/update-date/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    start: info.event.startStr,
+                    end: info.event.endStr
+                })
+            });
+        },
+        eventClick: function(info) {
+            currentTaskId = info.event.id;  // ← Убедитесь, что это число
+            document.getElementById('task-controls').style.display = 'block';
+        }
+    });
+    calendar.render();
+
+    // Обработчик кнопки "Начать"
+    document.getElementById('start-task').addEventListener('click', function() {
+        fetch(`/task/${currentTaskId}/start/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        }).then(response => {
+            if (response.status === 200) {
+                alert('Задача началась');
+            }
+        });
+    });
+
+    // Обработчик кнопки "Завершить"
+    document.getElementById('end-task').addEventListener('click', function() {
+        fetch(`/task/${currentTaskId}/end/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            }
+        }).then(response => {
+            if (response.status === 200) {
+                alert('Задача завершена');
+                document.getElementById('task-controls').style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}

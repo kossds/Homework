@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Отчет по времени</h2>
+
+<!-- Форма фильтрации по дате -->
+<form method="get">
+    <div class="form-group">
+        <label for="start_date">Дата начала:</label>
+        <input type="date" id="start_date" name="start_date" value="{{ request.GET.start_date }}">
+    </div>
+    <div class="form-group">
+        <label for="end_date">Дата окончания:</label>
+        <input type="date" id="end_date" name="end_date" value="{{ request.GET.end_date }}">
+    </div>
+    <button type="submit" class="btn btn-primary">Фильтровать</button>
+</form>
+
+<!-- График -->
+<canvas id="timeChart" width="400" height="200"></canvas>
+
+<script>
+// Получаем данные из Python
+const labels = {{ labels|safe }};
+const data = {{ data|safe }};
+
+// Отрисовываем график
+const ctx = document.getElementById('timeChart').getContext('2d');
+new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Время (минуты)',
+            data: data,
+            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+            borderColor: 'rgba(54, 162, 235, 1)',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

@@ -1,0 +1,184 @@
+<!-- admin_dashboard.html -->
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container">
+    <h1>Личный кабинет админа</h1>
+
+    <!-- Сотрудники -->
+    <div class="card">
+        <div class="card-header">
+            <h3>Сотрудники</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Имя</th>
+                        <th>Должность</th>
+                        <th>Отдел</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.user.get_full_name }}</td>
+                        <td>{{ employee.position }}</td>
+                        <td>{{ employee.department }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Проекты -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3>Проекты</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Дата начала</th>
+                        <th>Дата окончания</th>
+                        <th>Количество задач</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                    <tr>
+                        <td>{{ project.title }}</td>
+                        <td>{{ project.start_date|date:"d.m.Y" }}</td>
+                        <td>{% if project.end_date %}{{ project.end_date|date:"d.m.Y" }}{% else %}—{% endif %}</td>
+                        <td>{{ project.task_count }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Задачи -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3>Задачи</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Проект</th>
+                        <th>Статус</th>
+                        <th>Ответственный</th>
+                        <th>Срок</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <tr>
+                        <td>{{ task.title }}</td>
+                        <td>{{ task.project.title }}</td>
+                        <td>{{ task.get_status_display }}</td>
+                        <td>{% if task.assigned_to %}{{ task.assigned_to.user.get_full_name }}{% else %}—{% endif %}</td>
+                        <td>{{ task.due_date|date:"d.m.Y" }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Рабочие логи -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3>Рабочие логи</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Сотрудник</th>
+                        <th>Задача</th>
+                        <th>Дата</th>
+                        <th>Часы</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in work_logs %}
+                    <tr>
+                        <td>{{ log.employee.user.get_full_name }}</td>
+                        <td>{{ log.task.title }}</td>
+                        <td>{{ log.date|date:"d.m.Y" }}</td>
+                        <td>{{ log.hours_spent }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Рабочие дни -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3>Рабочие дни</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Сотрудник</th>
+                        <th>Дата начала</th>
+                        <th>Дата окончания</th>
+                        <th>Отработано (мин)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for log in daily_work_logs %}
+                    <tr>
+                        <td>{{ log.employee.user.get_full_name }}</td>
+                        <td>{{ log.start_time|date:"d.m.Y H:i" }}</td>
+                        <td>{% if log.end_time %}{{ log.end_time|date:"d.m.Y H:i" }}{% else %}—{% endif %}</td>
+                        <td>{{ log.total_worked_minutes }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Перерывы -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3>Перерывы</h3>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Сотрудник</th>
+                        <th>Тип</th>
+                        <th>Начало</th>
+                        <th>Окончание</th>
+                        <th>Длительность (мин)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for br in breaks %}
+                    <tr>
+                        <td>{{ br.work_log.employee.user.get_full_name }}</td>
+                        <td>{{ br.get_break_type_display }}</td>
+                        <td>{{ br.start_time|date:"d.m.Y H:i" }}</td>
+                        <td>{{ br.end_time|date:"d.m.Y H:i" }}</td>
+                        <td>{{ br.duration_minutes }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

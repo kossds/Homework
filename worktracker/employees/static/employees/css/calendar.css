@@ -1,0 +1,30 @@
+/* static/employees/css/calendar.css */
+.calendar-container {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    max-width: 1000px;
+    margin: auto;
+}
+
+#calendar {
+    margin-top: 20px;
+    background: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.btn {
+    padding: 8px 16px;
+    margin: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}

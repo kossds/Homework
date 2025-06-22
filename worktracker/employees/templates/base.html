@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Моя система</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>    
+</head>
+<body>
+    <!-- Навигационная панель -->
+    <div class="navbar">
+        <a href="{% url 'admin_dashboard' %}" class="btn btn-primary">Админ-панель</a>
+    </div>
+
+    <!-- Основной контент -->
+    {% block content %}
+    {% endblock %}
+</body>
+</html>

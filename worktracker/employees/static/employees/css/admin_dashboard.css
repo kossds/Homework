@@ -1,0 +1,11 @@
+/* static/employees/css/admin_dashboard.css */
+.card {
+    margin-bottom: 20px;
+}
+.table {
+    font-size: 14px;
+}
+thead {
+    background-color: #f8f9fa;
+    font-weight: bold;
+}
